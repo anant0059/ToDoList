@@ -1,0 +1,9 @@
+npm initial
+
+npm install express
+
+npm install body-parser
+
+npm install ejs
+
+nodemon app.js
