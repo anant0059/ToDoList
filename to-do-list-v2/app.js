@@ -48,7 +48,12 @@ const defaultItems = [item1, item2, item3];
 //   }
 // })
 
+const listSchema = new mongoose.Schema ({
+  name: String,
+  items: [itemsSchema]
+});
 
+const List = mongoose.model("List", listSchema);
 
 
 app.get("/", function(req, res) {
@@ -122,13 +127,55 @@ app.post("/delete", function(req, res){
     }
   });
 
-  console.log(req.body.checkbox);
+  //console.log(req.body.checkbox);
 });
 
 
-app.get("/work", function(req,res){
-  res.render("list", {listTitle: "Work List", newListItems: workItems});
+app.get("/:customListName", function(req, res){
+  const customListName = req.params.customListName;
+
+  List.findOne({name: customListName }, function(err, foundList){
+    if(err){
+      console.log(err);
+    }
+    else{
+      if(!foundList){
+        //console.log("Doesn't exist");
+
+        //Create a new list
+
+        const list = new List({
+          name: customListName,
+          items: defaultItems
+        });
+      
+        list.save();
+
+        res.redirect("/" + customListName);
+      }
+      else{
+        //console.log("Exists!");
+
+        //Show an existing list
+        
+        res.render("list", {listTitle: foundList.name, newListItems: foundList.items});
+      }
+    }
+  });
+
+  // const list = new List({
+  //   name: customListName,
+  //   items: defaultItems
+  // });
+
+  // list.save();
+
+  console.log(req.params.customListName);
 });
+
+// app.get("/work", function(req,res){
+//   res.render("list", {listTitle: "Work List", newListItems: workItems});
+// });
 
 app.get("/about", function(req, res){
   res.render("about");
