@@ -76,9 +76,9 @@ app.get("/", function(req, res) {
       else {
         res.render("list", {listTitle: "Today", newListItems: foundItems});
 
-        foundItems.forEach(function(foundItem){
-          console.log(foundItem.name);
-        });
+        // foundItems.forEach(function(foundItem){
+        //   console.log(foundItem.name);
+        // });
     }
       }
   });
@@ -107,6 +107,24 @@ app.post("/", function(req, res){
   //   res.redirect("/");
   // }
 });
+
+
+app.post("/delete", function(req, res){
+  const checkedItemId = req.body.checkbox;
+
+  Item.findByIdAndRemove(checkedItemId, function(err){
+    if(err){
+      console.log(err);
+    }
+    else{
+      console.log("Succesfully deleted the item.");
+      res.redirect("/");
+    }
+  });
+
+  console.log(req.body.checkbox);
+});
+
 
 app.get("/work", function(req,res){
   res.render("list", {listTitle: "Work List", newListItems: workItems});
